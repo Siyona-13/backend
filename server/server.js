@@ -70,7 +70,7 @@ let faceToken;
       const photoName = `photo_${name}.jpg`; // Example photo name
 
     const buffer = Buffer.from(photo, "base64");  // Convert base64 to buffer
-    const filePath = path.join(__dirname, "uploads", photoName); // Save to 'photos' folder
+    const filePath = path.join("/tmp/", "uploads", photoName); // Save to 'photos' folder
     fs.writeFileSync(filePath, buffer);
     
     console.log(`Photo saved as: ${photoName}`);
@@ -143,7 +143,7 @@ app.post("/search-face", async (req, res) => {
     // Step 1: Save the base64 photo to a file
     const photoName = `photo_${Date.now()}.jpg`; // Generate unique photo name
     const buffer = Buffer.from(photo, "base64"); // Convert base64 to buffer
-    const filePath = path.join(__dirname, "uploads", photoName); // Save to 'uploads' folder
+    const filePath = path.join("/tmp/", "uploads", photoName); // Save to 'uploads' folder
     fs.writeFileSync(filePath, buffer);
 
     console.log(`Photo saved as: ${photoName}`);
