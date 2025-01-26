@@ -8,7 +8,7 @@ const FormData = require("form-data"); // Import form-data
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
 const app = express();
-const port = process.env.PORT || 5000;  // Use Vercel's port or 5000 for local development
+const port = process.env.PORT   // Use Vercel's port or 5000 for local development
 
 
 
