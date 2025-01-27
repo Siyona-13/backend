@@ -212,6 +212,12 @@ app.post("/search-face", async (req, res) => {
       timeZone: "Asia/Kolkata",
     }).format(attendanceTime);
 
+// Save attendance record
+await db.collection("attendance_records").insertOne({
+  name,
+  attendanceTime: indianTime,
+});
+
     return res.status(200).json({
       success: true,
       message: "Attendance marked successfully",
@@ -224,6 +230,19 @@ app.post("/search-face", async (req, res) => {
 }
 });
 
+// Fetch Attendance Report
+app.get("/attendance-report", async (req, res) => {
+  try {
+    const records = await db.collection("attendance_records").find({}).toArray();
+    res.status(200).json({
+      success: true,
+      report: records,
+    });
+  } catch (error) {
+    console.error("Error fetching attendance report:", error.message);
+    res.status(500).json({ success: false, error: error.message });
+  }
+});
 
 // // Start server
 // app.listen(port, () => {
