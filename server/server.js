@@ -232,8 +232,12 @@ await db.collection("records").insertOne({
 // Fetch Attendance Report
 app.get("/attendance-report", async (req, res) => {
   try {
-    const records = await client.db("attendance").collection("records").find({}).toArray();
-    res.status(200).json({
+    const records = await client.db("attendance").collection("records")
+    .find({})
+    .sort({ attendanceTime: -1 }) // Sort by attendanceTime in descending order
+    .limit(30) // Limit to 30 records
+    .toArray();
+      res.status(200).json({
       success: true,
       report: records,
     });
