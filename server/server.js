@@ -134,19 +134,10 @@ app.post("/search-face", async (req, res) => {
     }
 
 const name = user.name || "Unknown User";
- const attendanceTime = new Date();
- const indianTime = new Intl.DateTimeFormat("en-IN",
-   { day: "2-digit",
-    month: "2-digit", 
-    year: "numeric", 
-    hour: "2-digit", 
-    minute: "2-digit", 
-    second: "2-digit", 
-    hour12: true,
-    timeZone: "Asia/Kolkata", 
-  }).format(attendanceTime);
+const attendanceTime = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+
     // Save attendance to DB
-    await db.collection("attendance").insertOne({ name: user.name, attendanceTime:indianTime });
+    await db.collection("attendance").insertOne({ name, attendanceTime });
 
     res.status(200).json({ success: true, message: "✅ Attendance marked!", name: user.name, time: attendanceTime });
   } catch (error) {
