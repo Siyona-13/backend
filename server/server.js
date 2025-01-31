@@ -1,4 +1,4 @@
-const express = require("express");
+//const express = require("express");
 const axios = require("axios");
 const bodyParser = require("body-parser");
 const cors = require("cors");
@@ -7,8 +7,8 @@ const path = require("path");
 const FormData = require("form-data");
 const { MongoClient, ServerApiVersion } = require("mongodb");
 
-const app = express();
-const port = process.env.PORT || 5000;
+//const app = express();
+const app = process.env.PORT;
 
 // Middleware
 app.use(bodyParser.json({ limit: "50mb" }));
@@ -134,11 +134,10 @@ app.post("/search-face", async (req, res) => {
     }
 
     const name = user.name || "Unknown User";
-    const attendanceTime = new Date().toLocaleString("en-US", {
-      timeZone: "Asia/Kolkata",
-      dateStyle: "short",
-      timeStyle: "medium"
-    });
+
+    // ✅ FIXED ATTENDANCE TIME
+    const now = new Date();
+    const attendanceTime = `${now.toLocaleDateString("en-IN", { timeZone: "Asia/Kolkata" })} - ${now.toLocaleTimeString("en-IN", { timeZone: "Asia/Kolkata" })}`;
 
     // Save attendance to DB
     await db.collection("attendance").insertOne({ name, attendanceTime });
