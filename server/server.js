@@ -27,7 +27,7 @@ const client = new MongoClient(uri, {
 
 let db;
 
-// Connect to MongoDB and handle errors properly
+// Connect to MongoDB
 (async () => {
   try {
     await client.connect();
@@ -51,12 +51,10 @@ app.post("/add-face", async (req, res) => {
   }
 
   try {
-    // Step 1: Save the image temporarily in /tmp/
     const photoName = `photo_${Date.now()}.jpg`;
     const filePath = path.join("/tmp/", photoName);
     fs.writeFileSync(filePath, Buffer.from(photo, "base64"));
 
-    // Step 2: Upload to Face++ for face detection
     const form = new FormData();
     form.append("api_key", apiKey);
     form.append("api_secret", apiSecret);
@@ -71,13 +69,11 @@ app.post("/add-face", async (req, res) => {
 
     console.log("✅ Detected Face Token:", faceToken);
 
-    // Step 3: Add Face to FaceSet
     await oneSecondBreak();
     await axios.post("https://api-us.faceplusplus.com/facepp/v3/faceset/addface", null, {
       params: { api_key: apiKey, api_secret: apiSecret, faceset_token: facesetToken, face_tokens: faceToken },
     });
 
-    // Step 4: Save to MongoDB
     await db.collection("users").insertOne({ name, faceToken });
 
     res.status(200).json({ message: "✅ Face added successfully!", name });
@@ -96,12 +92,10 @@ app.post("/search-face", async (req, res) => {
   }
 
   try {
-    // Step 1: Save image temporarily
     const photoName = `photo_${Date.now()}.jpg`;
     const filePath = path.join("/tmp/", photoName);
     fs.writeFileSync(filePath, Buffer.from(photo, "base64"));
 
-    // Step 2: Detect face
     const form = new FormData();
     form.append("api_key", apiKey);
     form.append("api_secret", apiSecret);
@@ -116,7 +110,6 @@ app.post("/search-face", async (req, res) => {
 
     console.log("✅ Detected face token:", faceToken);
 
-    // Step 3: Search Face++ FaceSet
     await oneSecondBreak();
     const searchResponse = await axios.post("https://api-us.faceplusplus.com/facepp/v3/search", null, {
       params: { api_key: apiKey, api_secret: apiSecret, face_token: faceToken, faceset_token: facesetToken },
@@ -127,19 +120,26 @@ app.post("/search-face", async (req, res) => {
       throw new Error("❌ No confident face match found");
     }
 
-    // Step 4: Lookup user in MongoDB
     const user = await db.collection("users").findOne({ faceToken: bestMatch.face_token });
     if (!user) {
       throw new Error("❌ Unknown user");
     }
 
-const name = user.name || "Unknown User";
-const attendanceTime = new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" });
+    const name = user.name || "Unknown User";
+    const attendanceTime = new Date().toLocaleString("en-IN", {
+      timeZone: "Asia/Kolkata",
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: true
+    });
 
-    // Save attendance to DB
     await db.collection("attendance").insertOne({ name, attendanceTime });
 
-    res.status(200).json({ success: true, message: "✅ Attendance marked!", name: user.name, time: attendanceTime });
+    res.status(200).json({ success: true, message: "✅ Attendance marked!", name, time: attendanceTime });
   } catch (error) {
     console.error("❌ Error marking attendance:", error.message);
     res.status(500).json({ success: false, error: error.message });
