@@ -8,7 +8,9 @@ const FormData = require("form-data"); // Import form-data
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
 const app = express();
+
 const port = process.env.PORT   // Use Vercel's port or 5000 for local development
+//const port = "5000"   // Use Vercel's port or 5000 for local development
 
 
 
@@ -225,7 +227,7 @@ app.post("/search-face", async (req, res) => {
 });
 
 
-// // Start server
+//  Start server
 // app.listen(port, () => {
 //   console.log(`Server running on http://localhost:${port}`);
 // });
