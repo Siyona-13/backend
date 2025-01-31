@@ -213,7 +213,7 @@ app.post("/search-face", async (req, res) => {
     }).format(attendanceTime);
 
 // Save attendance record
-await db.collection("attendance_records").insertOne({
+await db.collection("records").insertOne({
   name,
   attendanceTime: indianTime,
 });
@@ -232,7 +232,7 @@ await db.collection("attendance_records").insertOne({
 // Fetch Attendance Report
 app.get("/attendance-report", async (req, res) => {
   try {
-    const records = await db.collection("attendance_records").find({}).toArray();
+    const records = await db.collection("records").find({}).toArray();
     res.status(200).json({
       success: true,
       report: records,
