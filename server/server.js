@@ -232,7 +232,7 @@ await db.collection("records").insertOne({
 // Fetch Attendance Report
 app.get("/attendance-report", async (req, res) => {
   try {
-    const records = await db.collection("records").find({}).toArray();
+    const records = await client.db("attendance").collection("records").find({}).toArray();
     res.status(200).json({
       success: true,
       report: records,
